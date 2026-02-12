@@ -3,8 +3,8 @@ import { BinarySudokuState, BinarySudokuPlayer } from "./BinarySudokuState.js";
 
 function validLine(arr, size) {
   if (arr.includes("")) return false;
-  let zeros = arr.filter(v => v === 0).length;
   let ones = arr.filter(v => v === 1).length;
+  let zeros = arr.filter(v => v === 0).length;
   if (zeros !== size / 2 || ones !== size / 2) return false;
   for (let i = 0; i < size - 2; i++) {
     if (arr[i] === arr[i + 1] && arr[i] === arr[i + 2]) return false;
