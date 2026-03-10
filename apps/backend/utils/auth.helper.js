@@ -14,9 +14,9 @@ export const validateRegistrationData = (data) => {
     throw new ValidationError("Request body missing");
   }
 
-  const { name, email, password, phoneNumber } = data;
+  const { name, email } = data;
 
-  if (!name || !email || !password || !phoneNumber) {
+  if (!name || !email) {
     throw new ValidationError("Missing required fields");
   }
 
@@ -156,10 +156,14 @@ export const handleForgotPasswords = async (req,res,next) => {
     await checkOtpRegistrations(email);
     await trackOtpRequests(email);
 
+    const version = req.query.v || "1";
+    const mailer = version == "2" ? sendGridMail : sendEmail;
+
     await sendOtp(
       user.name,
       email,
-      "forgot-password-mail"
+      "forgot-password-mail",
+      mailer  
     );
 
     res.status(200).json({

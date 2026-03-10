@@ -1,5 +1,7 @@
 import "dotenv/config.js";
 import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import registerAllRoutes from "./routes/index.js";
 import { errorMiddleware } from "./middleware/error.js"; 
 import cookieParser from "cookie-parser";
@@ -11,6 +13,11 @@ import { join } from "path";
 const PUBLIC_DIR = join(__dirname, "./public");
 
 const app = express();
+
+app.use(cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,7 +37,7 @@ app.get("*", (req, res)=>{
 
 app.use(errorMiddleware);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 httpServer.listen(PORT, ()=>{
   console.log(`Server running on ${PORT}`);

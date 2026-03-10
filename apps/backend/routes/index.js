@@ -1,7 +1,9 @@
 import { authRoutes } from "../auth/route.js";
+import userRoutes from "./userRoutes.js";
 import {connectRedis} from "../redis/index.js";
 
 export default function registerAllRoutes(app) {
   connectRedis();
   app.use("/auth", authRoutes);
+  app.use("/api/users", userRoutes);
 }
