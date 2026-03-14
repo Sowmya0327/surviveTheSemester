@@ -16,7 +16,7 @@ const navItems = [
     { label: 'My profile', icon: <GenericIcon />, separator: true }
 ];
 
-const Sidebar = ({ activeTab, setActiveTab }) => {
+const Sidebar = ({ activeTab, setActiveTab, hasUnreadNotifications }) => {
     return (
         <aside className="dashboard-sidebar">
             <div className="sidebar-logo">
@@ -34,6 +34,16 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                         >
                             <span className="sidebar-item-icon">{item.icon}</span>
                             <span className="sidebar-item-label">{item.label}</span>
+                            {item.label === 'Notifications' && hasUnreadNotifications && (
+                                <span className="notification-dot" style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    backgroundColor: '#a3ff12', // using their brand green ish or just green
+                                    borderRadius: '50%',
+                                    marginLeft: 'auto',
+                                    marginRight: '8px'
+                                }}></span>
+                            )}
                             <span className="sidebar-item-arrow">→</span>
                         </button>
                     </React.Fragment>

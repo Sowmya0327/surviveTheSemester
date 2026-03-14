@@ -170,6 +170,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
                             window.dispatchEvent(new PopStateEvent('popstate'));
                         }
                     } catch (err) {
+                        console.error("Login catch error:", err);
                         setErrorMsg("Network error occurred.");
                     } finally {
                         setIsLoading(false);

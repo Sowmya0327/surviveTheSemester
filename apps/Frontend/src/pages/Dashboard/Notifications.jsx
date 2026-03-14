@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import './notifications.css';
 
-const dummyConnections = [
-    { id: 101, type: 'request', user: 'Alex Johnson', time: '2 hours ago', avatarClass: 'icon-blue', initial: 'AJ' },
-    { id: 102, type: 'accepted', user: 'Sam Rivera', time: 'Yesterday', avatarClass: 'icon-neon', initial: 'SR' }
-];
-
+// Dynamic connections instead of dummy
 const dummyGeneral = [
     { id: 201, title: 'Congrats! You have won a 7-day streak badge 🔥', time: '5 hours ago', icon: '🏆', iconClass: 'icon-orange' },
     { id: 202, title: 'You moved up to Global Rank #5! Keep it up.', time: '1 day ago', icon: '📈', iconClass: 'icon-neon' }
@@ -13,11 +9,70 @@ const dummyGeneral = [
 
 const Notifications = () => {
     const [view, setView] = useState('connections'); // 'connections' or 'general'
-    const [connections, setConnections] = useState(dummyConnections);
+    const [connections, setConnections] = useState([]);
+    
+    const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
-    const handleAction = (id) => {
-        // Just remove from list to simulate handling
-        setConnections(prev => prev.filter(c => c.id !== id));
+    React.useEffect(() => {
+        fetchNotifications();
+    }, []);
+
+    const fetchNotifications = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/connections/notifications`, {
+                credentials: 'include'
+            });
+            if (response.ok) {
+                const data = await response.json();
+                
+                const mapped = data.notifications.map(n => {
+                    const colors = ['icon-blue', 'icon-neon', 'icon-orange'];
+                    const bg = colors[n.senderId ? n.senderId.charCodeAt(0) % colors.length : 0] || 'icon-blue';
+                    return {
+                        id: n.id,
+                        type: n.type, 
+                        user: n.senderName || 'System',
+                        senderId: n.senderId,
+                        time: new Date(n.createdAt).toLocaleDateString(),
+                        avatarClass: bg,
+                        initial: n.senderName ? (n.senderName.split(' ').map(p=>p[0]).join('').substring(0,2).toUpperCase()) : '?'
+                    };
+                });
+                setConnections(mapped);
+                
+                await fetch(`${API_URL}/api/connections/notifications/read`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching notifications:", error);
+        }
+    };
+
+    const handleAction = async (id, actionType) => {
+        const notif = connections.find(c => c.id === id);
+        if (!notif) return;
+        
+        try {
+            const apiEndpoint = `${API_URL}/api/connections/${actionType}`;
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ senderId: notif.senderId, notificationId: id }),
+                credentials: 'include'
+            });
+            if (response.ok) {
+                if (actionType === 'accept') {
+                    // Turn it into accepted UI visually or just remove the action buttons
+                    setConnections(prev => prev.map(c => c.id === id ? { ...c, type: 'accepted', time: 'Just now' } : c));
+                } else {
+                    setConnections(prev => prev.filter(c => c.id !== id));
+                }
+            }
+        } catch(error) {
+            console.error("Error handling action:", error);
+        }
     };
 
     return (
@@ -61,8 +116,8 @@ const Notifications = () => {
                             
                             {notif.type === 'request' && (
                                 <div className="notification-actions">
-                                    <button className="notif-btn-accept" onClick={() => handleAction(notif.id)}>Accept</button>
-                                    <button className="notif-btn-decline" onClick={() => handleAction(notif.id)}>Decline</button>
+                                    <button className="notif-btn-accept" onClick={() => handleAction(notif.id, 'accept')}>Accept</button>
+                                    <button className="notif-btn-decline" onClick={() => handleAction(notif.id, 'decline')}>Decline</button>
                                 </div>
                             )}
                         </div>
