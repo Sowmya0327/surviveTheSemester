@@ -16,8 +16,7 @@ export default function registerGameServer(app, httpServer) {
       pingMaxRetries: 3, 
     })
   });
-  gameServer.define("campusFighter", fighterGameRoom);
-  gameServer.define("fighterGameRoom", fighterGameRoom); // fallback
+  gameServer.define("game", fighterGameRoom);
   gameServer.define("puzzle15", Puzzle15Room);
   gameServer.define("canonGameRoom", CanonRoom);
   gameServer.define("mathTugRoom", MathTugRoom);

@@ -52,26 +52,6 @@ export class GameState extends Schema {
 
   updateGame() {
     this.game.update(this.players);
-    if (this.game.state === "lobby" && this.players.size < Constants.ROOM_PLAYERS_MIN) {
-      this.game.lobbyEndsAt = 0;
-
-      if (!this.waitingNotified) {
-        this.handleWaitingStart();
-        this.waitingNotified = true;
-      }
-      return;
-    }
-
-    // Auto-start logic when enough players have joined.
-    if (this.game.state === "lobby" && this.players.size >= Constants.ROOM_PLAYERS_MIN && !this.game.lobbyEndsAt) {
-      this.waitingNotified = false;
-      if (this.game.onLobbyStart) this.game.onLobbyStart();
-      this.game.lobbyEndsAt = Date.now() + 3000; // Start after 3 seconds
-    }
-
-    if (this.game.state === "game") {
-      this.checkWinCondition();
-    }
   }
 
   updatePlayers() {

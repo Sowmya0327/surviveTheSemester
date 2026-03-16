@@ -1,5 +1,6 @@
+import { GameMode } from './types';
 
-export const APP_TITLE = 'CAMPUS FIGHTER';
+export const APP_TITLE = 'TOSIOS';
 
 // General
 export const WS_PORT = 3001;
@@ -18,7 +19,7 @@ export const PLAYER_NAME_MAX = 16;
 export const LOG_LINES_MAX = 5;
 export const LOBBY_DURATION = 1000 * 10; // 10 seconds
 export const GAME_DURATION = 1000 * 90; // 90 seconds
-export const GAME_MODES = ['deathmatch', 'team deathmatch'];
+export const GAME_MODES: GameMode[] = ['deathmatch', 'team deathmatch'];
 
 // Background
 export const BACKGROUND_COLOR = '#25131A';

@@ -24,7 +24,7 @@ export class fighterGameRoom extends Room {
             });
 
             // Init State
-            this.setState(new GameState(
+            this.state = (new GameState(
                     roomName,
                     options.roomMap,
                     this.maxClients,
