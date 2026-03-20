@@ -27,8 +27,14 @@ export function movePlayer(
     speed: number,
     walls: TreeCollider,
 ): { x: number; y: number } {
+    if (dirX === 0 && dirY === 0) return { x, y };
+
     // Move
     const magnitude = Maths.normalize2D(dirX, dirY);
+    
+    // 2. Double-check magnitude isn't zero
+    if (magnitude === 0) return { x, y };
+
     const speedX = Math.round(Maths.round2Digits(dirX * (speed / magnitude)));
     const speedY = Math.round(Maths.round2Digits(dirY * (speed / magnitude)));
     x += speedX;

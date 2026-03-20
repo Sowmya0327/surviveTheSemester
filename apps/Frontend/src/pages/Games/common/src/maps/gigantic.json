@@ -1546,7 +1546,7 @@
       "name": "ground",
       "opacity": 1,
       "type": "tilelayer",
-      "visible": false,
+      "visible": true,
       "width": 32,
       "x": 0,
       "y": 0
@@ -3095,7 +3095,7 @@
       "name": "walls",
       "opacity": 1,
       "type": "tilelayer",
-      "visible": false,
+      "visible": true,
       "width": 32,
       "x": 0,
       "y": 0
@@ -4644,7 +4644,7 @@
       "name": "decor",
       "opacity": 1,
       "type": "tilelayer",
-      "visible": false,
+      "visible": true,
       "width": 32,
       "x": 0,
       "y": 0
@@ -6193,7 +6193,7 @@
       "name": "spawners",
       "opacity": 1,
       "type": "tilelayer",
-      "visible": true,
+      "visible": false,
       "width": 32,
       "x": 0,
       "y": 0

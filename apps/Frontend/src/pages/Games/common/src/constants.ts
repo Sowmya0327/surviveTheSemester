@@ -1,10 +1,10 @@
 import { GameMode } from './types';
 
-export const APP_TITLE = 'TOSIOS';
+export const APP_TITLE = 'SURVIVE THE SEMESTER';
 
 // General
-export const WS_PORT = 3001;
-export const ROOM_NAME = 'game'; // Colyseus Room<T>'s name (no need to change)
+export const WS_PORT = 3000;
+export const ROOM_NAME = 'campusFighter'; // Colyseus Room<T>'s name (no need to change)
 export const ROOM_REFRESH = 3000;
 export const PLAYERS_REFRESH = 1000;
 export const DEBUG = false;

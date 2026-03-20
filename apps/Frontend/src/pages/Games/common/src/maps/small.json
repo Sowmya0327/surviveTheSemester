@@ -266,7 +266,7 @@
       "name": "ground",
       "opacity": 1,
       "type": "tilelayer",
-      "visible": false,
+      "visible": true,
       "width": 16,
       "x": 0,
       "y": 0
@@ -535,7 +535,7 @@
       "name": "walls",
       "opacity": 1,
       "type": "tilelayer",
-      "visible": false,
+      "visible": true,
       "width": 16,
       "x": 0,
       "y": 0
@@ -804,7 +804,7 @@
       "name": "decor",
       "opacity": 1,
       "type": "tilelayer",
-      "visible": false,
+      "visible": true,
       "width": 16,
       "x": 0,
       "y": 0

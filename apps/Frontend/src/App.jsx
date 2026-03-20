@@ -11,7 +11,9 @@ import Puzzle15Page from './pages/Games/Puzzle15/Puzzle15Page';
 import CanonGamePage from './pages/Games/CanonGame/CanonGamePage';
 import MathTugPage from './pages/Games/MathTug/MathTugPage';
 import BinarySudokuPage from './pages/Games/BinarySudoku/BinarySudokuPage';
+import campusFighter from './pages/Games/campusFighter/campusFighter';
 import './App.css';
+import CampusFighter from './pages/Games/campusFighter/campusFighter';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -27,6 +29,10 @@ function App() {
 
   if (currentPath === '/dashboard') {
     return <Dashboard />;
+  }
+
+  if(currentPath.startsWith('/campusFighter')) {
+    return <CampusFighter />;
   }
 
   if (currentPath.startsWith('/puzzle')) {

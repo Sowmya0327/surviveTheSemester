@@ -1,8 +1,11 @@
-import { TMX } from '../tiled';
-import gigantic from './gigantic.json';
 import small from './small.json';
+import gigantic from './gigantic.json';
 
-export const List: { [key: string]: TMX.IMap } = {
+export const SpriteSheets: { [key: string]: string } = {
+    'dungeon.png': '/dungeon.png',
+};
+
+export const List: any = {
     small,
     gigantic,
 };

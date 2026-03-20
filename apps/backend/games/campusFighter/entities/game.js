@@ -34,6 +34,8 @@ export class Game extends Schema {
       if (this.lobbyEndsAt && now >= this.lobbyEndsAt) {
         this.state = "game";
 
+        this.lobbyEndsAt = 0;
+
         if (this.onGameStart) this.onGameStart();
       }
     }
@@ -54,13 +56,13 @@ export class Game extends Schema {
       }
     }
 
-    console.log(
-      "[GameUpdate]",
-      "state:", this.state,
-      "players:", players.size,
-      "lobbyEndsAt:", this.lobbyEndsAt,
-      "gameEndsAt:", this.gameEndsAt
-    );
+    // console.log(
+    //   "[GameUpdate]",
+    //   "state:", this.state,
+    //   "players:", players.size,
+    //   "lobbyEndsAt:", this.lobbyEndsAt,
+    //   "gameEndsAt:", this.gameEndsAt
+    // );
   }
 }
 

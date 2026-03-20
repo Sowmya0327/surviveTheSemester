@@ -16,11 +16,11 @@ export default function registerGameServer(app, httpServer) {
       pingMaxRetries: 3, 
     })
   });
-  gameServer.define("game", fighterGameRoom);
+  gameServer.define("campusFighter", fighterGameRoom);
   gameServer.define("puzzle15", Puzzle15Room);
-  gameServer.define("canonGameRoom", CanonRoom);
-  gameServer.define("mathTugRoom", MathTugRoom);
-  gameServer.define("binarySudokuRoom", BinarySudokuRoom);
+  gameServer.define("canon", CanonRoom);
+  gameServer.define("mathTug", MathTugRoom);
+  gameServer.define("binarySudoku", BinarySudokuRoom);
   app.use("/colyseus", monitor(gameServer));
   
   return gameServer;
