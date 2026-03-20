@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import './profileheader.css';
 import EditProfileModal from './EditProfileModal';
 
@@ -28,15 +29,27 @@ const EditIcon = () => (
 const ProfileHeader = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     
+    const user = useSelector((state) => state.user.currentUser);
+    
     // Core profile state
     const [profile, setProfile] = useState({
-        name: 'Anil kumawat',
-        handle: '@anilkumawat8738',
+        name: user?.name || 'Guest',
+        handle: user?.email ? `@${user.email.split('@')[0]}` : '@guest',
         friends: 0,
         tag1: 'Add College',
         tag2: 'Add Socials',
         avatarGradient: 'linear-gradient(135deg, #ff7e5f, #feb47b)'
     });
+
+    useEffect(() => {
+        if (user) {
+            setProfile(prev => ({
+                ...prev,
+                name: user.name,
+                handle: `@${user.email.split('@')[0]}`
+            }));
+        }
+    }, [user]);
 
     const handleSaveProfile = (newData) => {
         setProfile(newData);

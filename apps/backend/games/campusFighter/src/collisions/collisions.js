@@ -88,7 +88,7 @@ export class TreeCollider extends RBush {
         const leafBody = new RectangleBody(0, 0, 0, 0);
 
         for (const wall of leaves) {
-            if (!wall.collider || !COLLISION_TYPES.includes(wall.collider)) {
+            if (!wall.collider || !Object.values(COLLISION_TYPES).includes(wall.collider)) {
                 continue;
             }
 
@@ -135,7 +135,7 @@ export class TreeCollider extends RBush {
         const leafBody = new RectangleBody(0, 0, 0, 0);
 
         for (const wall of leaves) {
-            if (!wall.collider || !COLLISION_TYPES.includes(wall.collider)) {
+            if (!wall.collider || !Object.values(COLLISION_TYPES).includes(wall.collider)) {
                 continue;
             }
 

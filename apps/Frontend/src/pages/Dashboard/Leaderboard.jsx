@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import './leaderboard.css';
 
 // Dummy data for simulation
@@ -19,8 +20,20 @@ const friendsData = [
 
 const Leaderboard = () => {
     const [view, setView] = useState('global'); // 'global' or 'friends'
+    const user = useSelector((state) => state.user.currentUser);
 
-    const activeData = view === 'global' ? globalData : friendsData;
+    const baseData = view === 'global' ? globalData : friendsData;
+    
+    const activeData = baseData.map(u => 
+        u.isMe 
+            ? { 
+                ...u, 
+                name: user?.name || 'Guest', 
+                handle: user?.email ? `@${user.email.split('@')[0]}` : '@guest', 
+                avatarInit: (user?.name || 'Guest').substring(0, 2).toUpperCase() 
+              }
+            : u
+    );
 
     return (
         <div className="leaderboard-container">

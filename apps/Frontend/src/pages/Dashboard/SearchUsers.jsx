@@ -61,13 +61,27 @@ const SearchUsers = () => {
         return () => clearTimeout(timeoutId);
     }, [searchQuery]);
 
-    const handleRequest = (id) => {
-        // Here you would typically make an API call to send a connection request
-        setRequestedIds(prev => {
-            const next = new Set(prev);
-            next.add(id);
-            return next;
-        });
+    const handleRequest = async (id) => {
+        try {
+            const response = await fetch(`${API_URL}/api/connections/request`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ receiverId: id }),
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                setRequestedIds(prev => {
+                    const next = new Set(prev);
+                    next.add(id);
+                    return next;
+                });
+            }
+        } catch (error) {
+            console.error('Error sending request:', error);
+        }
     };
 
     const filteredUsers = results.filter(user => {
@@ -128,7 +142,8 @@ const SearchUsers = () => {
                 {isLoading && <div style={{ padding: '24px', textAlign: 'center' }}>Searching...</div>}
                 
                 {!isLoading && filteredUsers.map(user => {
-                    const isRequested = requestedIds.has(user.id);
+                    const isRequested = requestedIds.has(user.id) || user.isSentRequest;
+                    const isReceived = user.isReceivedRequest;
                     return (
                         <div key={user.id} className="search-user-card">
                             <div className="search-user-info-group">
@@ -150,10 +165,14 @@ const SearchUsers = () => {
                             </div>
                             
                             <button 
-                                className={`search-action-btn ${isRequested ? 'requested' : ''}`}
-                                onClick={() => !isRequested && handleRequest(user.id)}
+                                className={`search-action-btn ${isRequested ? 'requested' : ''} ${isReceived || user.isConnection ? 'disabled-btn' : ''}`}
+                                onClick={() => !isRequested && !user.isConnection && !isReceived && handleRequest(user.id)}
                             >
-                                {isRequested ? (
+                                {user.isConnection ? (
+                                    <><CheckIcon /> Connected</>
+                                ) : isReceived ? (
+                                    <><CheckIcon /> Request Pending</>
+                                ) : isRequested ? (
                                     <><CheckIcon /> Requested</>
                                 ) : (
                                     <><UserPlusIcon /> Add</>

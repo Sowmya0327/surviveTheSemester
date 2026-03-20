@@ -7,6 +7,7 @@ import { errorMiddleware } from "./middleware/error.js";
 import compression from "compression";
 import { createServer }  from "http";
 import registerGameServer from "./games/index.js";
+import { matchMaker } from "@colyseus/core";
 import { join } from "path";
 import { fileURLToPath } from "url";
 
@@ -34,22 +35,47 @@ app.use(compression())
 
 
 registerAllRoutes(app);
-app.use(express.static(PUBLIC_DIR));
 
 const httpServer = createServer(app);
 const gameServer = registerGameServer(app, httpServer);
 
+app.get("/api/games/:roomName/rooms", async (req, res) => {
+  try {
+    res.set("Cache-Control", "no-store");
+    
+    const { roomName } = req.params;
+    
+    const rooms = await matchMaker.query({
+      name: roomName,
+      locked: false,
+      private: false,
+    });
+    
+    const normalized = rooms.map((room) => ({
+      roomId: room.roomId,
+      clients: room.clients,
+      maxClients: room.maxClients,
+      metadata: room.metadata || {},
+    }));
 
-app.get(/.*/, (req, res, next) => {
-  if (req.path.startsWith("/matchmake")) {
-    return next();
+    res.status(200).json(normalized);
+  } catch (error) {
+    res.status(500).json({
+      error: "Could not fetch rooms",
+      message: error?.message || "unknown_error",
+    });
   }
-  res.sendFile(join(PUBLIC_DIR, "index.html"));
 });
+
+// app.get(/.*/, (req, res, next) => {
+//   res.sendFile(join(PUBLIC_DIR, "index.html"));
+// });
 
 app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 3000;
+
+app.use(express.static(PUBLIC_DIR));
 
 gameServer.listen(PORT).then(() => {
   console.log(`Server running on ${PORT}`);

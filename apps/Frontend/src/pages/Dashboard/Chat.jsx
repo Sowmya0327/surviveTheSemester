@@ -17,7 +17,7 @@ const dummyContacts = [
 
 const dummyMessages = {
     1: [
-        { id: 101, text: 'Hey Anil!', sender: 'them', time: '10:30 AM' },
+        { id: 101, text: 'Hey there!', sender: 'them', time: '10:30 AM' },
         { id: 102, text: 'Hey Alex, what\'s up?', sender: 'me', time: '10:35 AM' },
         { id: 103, text: 'Are we doing the match tonight?', sender: 'them', time: '10:45 AM' },
     ],
