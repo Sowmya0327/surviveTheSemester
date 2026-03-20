@@ -35,20 +35,22 @@ app.use(compression())
 
 
 registerAllRoutes(app);
-app.use(express.static(PUBLIC_DIR));
 
 const httpServer = createServer(app);
 const gameServer = registerGameServer(app, httpServer);
 
-app.get("/api/games/rooms/:roomName", async (req, res) => {
+app.get("/api/games/:roomName/rooms", async (req, res) => {
   try {
+    res.set("Cache-Control", "no-store");
+    
     const { roomName } = req.params;
+    
     const rooms = await matchMaker.query({
       name: roomName,
       locked: false,
       private: false,
     });
-
+    
     const normalized = rooms.map((room) => ({
       roomId: room.roomId,
       clients: room.clients,
@@ -65,89 +67,15 @@ app.get("/api/games/rooms/:roomName", async (req, res) => {
   }
 });
 
-app.get("/api/games/puzzle15/rooms", async (req, res) => {
-  try {
-    const rooms = await matchMaker.query({
-      name: "puzzle15",
-      locked: false,
-      private: false,
-    });
-
-    const normalized = rooms.map((room) => ({
-      roomId: room.roomId,
-      clients: room.clients,
-      maxClients: room.maxClients,
-      metadata: room.metadata || {},
-    }));
-
-    res.status(200).json(normalized);
-  } catch (error) {
-    res.status(500).json({
-      error: "Could not fetch puzzle rooms",
-      message: error?.message || "unknown_error",
-    });
-  }
-});
-
-app.get("/api/games/mathtug/rooms", async (req, res) => {
-  try {
-    const rooms = await matchMaker.query({
-      name: "mathTugRoom",
-      locked: false,
-      private: false,
-    });
-
-    const normalized = rooms.map((room) => ({
-      roomId: room.roomId,
-      clients: room.clients,
-      maxClients: room.maxClients,
-      metadata: room.metadata || {},
-    }));
-
-    res.status(200).json(normalized);
-  } catch (error) {
-    res.status(500).json({
-      error: "Could not fetch mathtug rooms",
-      message: error?.message || "unknown_error",
-    });
-  }
-});
-
-app.get("/api/games/binarysudoku/rooms", async (req, res) => {
-  try {
-    const rooms = await matchMaker.query({
-      name: "binarySudokuRoom",
-      locked: false,
-      private: false,
-    });
-
-    const normalized = rooms.map((room) => ({
-      roomId: room.roomId,
-      clients: room.clients,
-      maxClients: room.maxClients,
-      metadata: room.metadata || {},
-    }));
-
-    res.status(200).json(normalized);
-  } catch (error) {
-    res.status(500).json({
-      error: "Could not fetch binary sudoku rooms",
-      message: error?.message || "unknown_error",
-    });
-  }
-});
-
-
-app.get(/.*/, (req, res, next) => {
-  if (req.path.startsWith("/matchmake")) {
-    return next();
-  }
-  res.sendFile(join(PUBLIC_DIR, "index.html"));
-});
+// app.get(/.*/, (req, res, next) => {
+//   res.sendFile(join(PUBLIC_DIR, "index.html"));
+// });
 
 app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 3000;
+
+app.use(express.static(PUBLIC_DIR));
 
 gameServer.listen(PORT).then(() => {
   console.log(`Server running on ${PORT}`);

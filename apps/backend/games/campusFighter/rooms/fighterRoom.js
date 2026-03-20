@@ -1,19 +1,21 @@
-import { Room } from "@colyseus/core"
+import { Room } from "@colyseus/core";
 import { GameState } from "../state/FighterState.js";
-import { gameConstants, Maths } from "../src/index.js";
+import { Constants, Maths } from "../src/index.js";
 
 export class fighterGameRoom extends Room {
     onCreate(options) {
         try {
             console.log("fighterGameRoom created:", options);
+            
+            // 2. CHANGE gameConstants TO Constants
             this.maxClients = Maths.clamp(
                 options.roomMaxPlayers || 0,
-                gameConstants.ROOM_PLAYERS_MIN,
-                gameConstants.ROOM_PLAYERS_MAX
+                Constants.ROOM_PLAYERS_MIN,
+                Constants.ROOM_PLAYERS_MAX
             );
 
-            const playerName = options.playerName.slice(0, gameConstants.PLAYER_NAME_MAX);
-            const roomName = options.roomName.slice(0, gameConstants.ROOM_NAME_MAX);
+            const playerName = options.playerName.slice(0, Constants.PLAYER_NAME_MAX);
+            const roomName = options.roomName.slice(0, Constants.ROOM_NAME_MAX);
 
             this.setMetadata({
                 playerName,
@@ -25,11 +27,11 @@ export class fighterGameRoom extends Room {
 
             // Init State
             this.setState(new GameState(
-                    roomName,
-                    options.roomMap,
-                    this.maxClients,
-                    options.mode,
-                    this.handleMessage
+                roomName,
+                options.roomMap,
+                this.maxClients,
+                options.mode,
+                this.handleMessage
             ));
 
             this.setSimulationInterval(() => this.handleTick());
@@ -40,7 +42,6 @@ export class fighterGameRoom extends Room {
 
             // Listen to messages from clients
             this.onMessage('*', (client, type, message) => {
-
                 const playerId = client.sessionId;
 
                 switch (type) {
@@ -52,7 +53,6 @@ export class fighterGameRoom extends Room {
                             ...message,
                         });
                         break;
-
                     default:
                         break;
                 }
@@ -64,7 +64,6 @@ export class fighterGameRoom extends Room {
     }
 
     onJoin(client, options) {
-
         this.state.playerAdd(client.sessionId, options.playerName);
         this.broadcast("playersStatus", {
             count: this.state.players.size,
@@ -76,7 +75,6 @@ export class fighterGameRoom extends Room {
     }
 
     onLeave(client) {
-
         this.state.playerRemove(client.sessionId);
         this.broadcast("playersStatus", {
             count: this.state.players.size,
