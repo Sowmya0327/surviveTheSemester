@@ -1,6 +1,6 @@
 import { Constants } from '../../../../../common/src';
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Space, Text, View } from '../../../components';
 import { titleImage } from '../../../images';
 
