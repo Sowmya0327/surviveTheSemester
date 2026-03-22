@@ -48,30 +48,18 @@ export class GameState extends Schema {
     this.updatePlayers();
     this.updateMonsters();
     this.updateBullets();
+
+    // The Auto-Restart Loop
+    if (this.game.state === "end" && Date.now() >= this.game.gameEndsAt + 5000) {
+      // 5 seconds after the game ends, throw everyone back in the lobby!
+      this.game.state = "waiting";
+      this.setPlayersActive(false);
+      this.setPlayersPositionRandomly();
+    }
   }
 
   updateGame() {
     this.game.update(this.players);
-    if (this.game.state === "lobby" && this.players.size < Constants.ROOM_PLAYERS_MIN) {
-      this.game.lobbyEndsAt = 0;
-
-      if (!this.waitingNotified) {
-        this.handleWaitingStart();
-        this.waitingNotified = true;
-      }
-      return;
-    }
-
-    // Auto-start logic when enough players have joined.
-    if (this.game.state === "lobby" && this.players.size >= Constants.ROOM_PLAYERS_MIN && !this.game.lobbyEndsAt) {
-      this.waitingNotified = false;
-      if (this.game.onLobbyStart) this.game.onLobbyStart();
-      this.game.lobbyEndsAt = Date.now() + 3000; // Start after 3 seconds
-    }
-
-    if (this.game.state === "game") {
-      this.checkWinCondition();
-    }
   }
 
   updatePlayers() {
@@ -207,7 +195,7 @@ export class GameState extends Schema {
     const corrected = this.walls.correctWithCircle(player.body);
     player.setPosition(corrected.x, corrected.y);
 
-    player.ack = ts;
+    player.ack = Number(ts);
   }
 
   playerRotate(id, ts, rotation) {
@@ -218,23 +206,27 @@ export class GameState extends Schema {
   }
 
   playerShoot(id, ts, angle) {
-
     const player = this.players.get(id);
     if (!player || !player.isAlive || this.game.state !== "game") return;
 
-    const delta = ts - player.lastShootAt;
+    // 1. THE FIX: Force the network variables to be standard Numbers
+    const safeTs = Number(ts);
+    const safeAngle = Number(angle);
+    const lastShootAt = Number(player.lastShootAt || 0);
+
+    const delta = safeTs - lastShootAt;
 
     if (player.lastShootAt && delta < Constants.BULLET_RATE) return;
 
-    player.lastShootAt = ts;
+    player.lastShootAt = safeTs;
 
-    const bulletX = player.x + Math.cos(angle) * Constants.PLAYER_WEAPON_SIZE;
-    const bulletY = player.y + Math.sin(angle) * Constants.PLAYER_WEAPON_SIZE;
+    // 2. Use the safe variables for the trig math
+    const bulletX = player.x + Math.cos(safeAngle) * Constants.PLAYER_WEAPON_SIZE;
+    const bulletY = player.y + Math.sin(safeAngle) * Constants.PLAYER_WEAPON_SIZE;
 
     const index = this.bullets.findIndex(b => !b.active);
 
     if (index === -1) {
-
       this.bullets.push(
         new Bullet(
           id,
@@ -242,25 +234,22 @@ export class GameState extends Schema {
           bulletX,
           bulletY,
           Constants.BULLET_SIZE,
-          angle,
+          safeAngle,
           player.color,
           Date.now()
         )
       );
-
     } else {
-
       this.bullets[index].reset(
         id,
         player.team,
         bulletX,
         bulletY,
         Constants.BULLET_SIZE,
-        angle,
+        safeAngle,
         player.color,
         Date.now()
       );
-
     }
   }
 
@@ -350,16 +339,26 @@ export class GameState extends Schema {
   }
 
   setPlayersPositionRandomly() {
-    this.players.forEach(player => {
-      const spawner = this.getSpawnerRandomly();
-      if (spawner) {
-        player.setPosition(
-          spawner.x + Constants.PLAYER_SIZE / 2,
-          spawner.y + Constants.PLAYER_SIZE / 2
-        );
-      }
-    });
-  }
+      this.players.forEach(player => {
+        const spawner = this.getSpawnerRandomly();
+        if (spawner) {
+          // Calculate the new safe coordinates
+          const newX = spawner.x + Constants.PLAYER_SIZE / 2;
+          const newY = spawner.y + Constants.PLAYER_SIZE / 2;
+          
+          player.setPosition(newX, newY);
+          
+          // FORCE THE SYNC: Tell Colyseus to broadcast these exact values immediately
+          player.assign({
+              x: newX,
+              y: newY,
+              toX: newX,
+              toY: newY,
+              ack: Date.now() 
+          });
+        }
+      });
+    }
 
   setPlayersTeamsRandomly() {
     let i = 0;
@@ -413,6 +412,9 @@ export class GameState extends Schema {
 
     this.setPlayersPositionRandomly();
     this.setPlayersActive(true);
+
+    this.game.lobbyEndsAt = 0;
+
     this.game.gameEndsAt = Date.now() + Constants.GAME_DURATION;
 
     this.propsAdd(Constants.FLASKS_COUNT || 0);

@@ -17,11 +17,10 @@ export default function registerGameServer(app, httpServer) {
     })
   });
   gameServer.define("campusFighter", fighterGameRoom);
-  gameServer.define("fighterGameRoom", fighterGameRoom); // fallback
   gameServer.define("puzzle15", Puzzle15Room);
-  gameServer.define("canonGameRoom", CanonRoom);
-  gameServer.define("mathTugRoom", MathTugRoom);
-  gameServer.define("binarySudokuRoom", BinarySudokuRoom);
+  gameServer.define("canon", CanonRoom);
+  gameServer.define("mathTug", MathTugRoom);
+  gameServer.define("binarySudoku", BinarySudokuRoom);
   app.use("/colyseus", monitor(gameServer));
   
   return gameServer;
