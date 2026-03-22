@@ -1,4 +1,3 @@
-/* profileheader.css */
 .profile-header-container {
     background-color: var(--md-sys-color-surface-container);
     border: 1px solid var(--md-sys-color-outline-variant);
@@ -10,25 +9,28 @@
 
 .profile-cover {
     width: 100%;
-    height: 160px;
-    background-color: #87CEEB; /* Muted blue for the pattern background */
+    height: 180px;
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Optional: add a CSS pattern here to mimic the screenshot */
-    background-image: radial-gradient(var(--md-sys-color-background) 2px, transparent 2px);
-    background-size: 30px 30px;
+}
+
+.profile-cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .profile-cover-badge {
-    background-color: var(--md-sys-color-background);
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    background-color: rgba(0, 0, 0, 0.82);
     color: var(--md-sys-color-on-background);
-    padding: 4px 16px;
+    padding: 6px 14px;
     border-radius: var(--md-sys-shape-corner-medium);
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: 1px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
@@ -59,7 +61,6 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Since we don't have the image, using a placeholder styling */
     background: linear-gradient(135deg, #ff7e5f, #feb47b);
 }
 
@@ -89,31 +90,6 @@
     color: var(--md-sys-color-primary);
 }
 
-.profile-tags {
-    display: flex;
-    gap: 12px;
-    margin-top: 4px;
-}
-
-.profile-tag-btn {
-    background-color: transparent;
-    border: 1px solid var(--md-sys-color-outline-variant);
-    color: var(--md-sys-color-on-surface-variant);
-    padding: 6px 12px;
-    border-radius: var(--md-sys-shape-corner-medium);
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
-}
-
-.profile-tag-btn:hover {
-    background-color: var(--md-sys-color-state-hover);
-}
-
 .profile-actions {
     display: flex;
     gap: 12px;
@@ -132,7 +108,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
     text-transform: uppercase;
 }
 
@@ -151,7 +126,6 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
 }
 
 .profile-share-btn:hover {

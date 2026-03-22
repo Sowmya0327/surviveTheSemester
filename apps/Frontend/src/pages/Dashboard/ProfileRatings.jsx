@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import './profileratings.css';
 
 const ForwardIcon = () => (
@@ -8,14 +9,10 @@ const ForwardIcon = () => (
     </svg>
 );
 
-const ratingsData = [
-    { id: 'math', score: 1018, label: 'Math', icon: '▶▶', iconClass: 'icon-math' },
-    { id: 'classical', score: 986, label: 'Classical', icon: '♔', iconClass: 'icon-classical' },
-    { id: 'memory', score: 1008, label: 'Memory', icon: '⚖', iconClass: 'icon-memory' },
-    { id: 'puzzle', score: 1012, label: 'Puzzle', icon: '⚄', iconClass: 'icon-puzzle' },
-];
-
 const ProfileRatings = () => {
+    const user = useSelector((state) => state.user.currentUser);
+    const rating = user?.rating || user?.Rating || 1018;
+
     return (
         <div className="profile-ratings-container">
             <div className="profile-section-header">
@@ -24,15 +21,12 @@ const ProfileRatings = () => {
                     <ForwardIcon />
                 </button>
             </div>
-            
+
             <div className="profile-ratings-grid">
-                {ratingsData.map((rating) => (
-                    <div key={rating.id} className="profile-rating-card">
-                        <span className={`profile-rating-icon ${rating.iconClass}`}>{rating.icon}</span>
-                        <h4 className="profile-rating-score">{rating.score}</h4>
-                        <p className="profile-rating-label">{rating.label}</p>
-                    </div>
-                ))}
+                <div className="profile-rating-card">
+                    <h4 className="profile-rating-score">{rating}</h4>
+                    <p className="profile-rating-label">Overall rating</p>
+                </div>
             </div>
         </div>
     );

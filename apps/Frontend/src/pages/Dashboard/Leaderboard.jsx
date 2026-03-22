@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Lottie from 'lottie-react';
 import './leaderboard.css';
@@ -10,7 +10,6 @@ const PODIUM_LOTTIES = {
     3: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f949/lottie.json'
 };
 
-// Dummy data for simulation
 const globalData = [
     { id: 1, rank: 1, name: 'Alex Johnson', handle: '@alexj', score: 2450, avatarBg: 'linear-gradient(135deg, #FFD700, #FDB931)', avatarInit: 'AJ' },
     { id: 2, rank: 2, name: 'Sam Rivera', handle: '@samr', score: 2310, avatarBg: 'linear-gradient(135deg, #C0C0C0, #8A8A8A)', avatarInit: 'SR' },
@@ -27,7 +26,7 @@ const friendsData = [
 ];
 
 const Leaderboard = () => {
-    const [view, setView] = useState('global'); // 'global' or 'friends'
+    const [view, setView] = useState('global');
     const user = useSelector((state) => state.user.currentUser);
     const [headerAnimation, setHeaderAnimation] = useState(null);
     const [podiumAnimations, setPodiumAnimations] = useState({});
@@ -40,9 +39,7 @@ const Leaderboard = () => {
                 const headerResponse = await fetch(LEADERBOARD_LOTTIE_URL);
                 if (headerResponse.ok) {
                     const headerData = await headerResponse.json();
-                    if (isMounted) {
-                        setHeaderAnimation(headerData);
-                    }
+                    if (isMounted) setHeaderAnimation(headerData);
                 }
             } catch {
                 // fallback handled in render
@@ -73,43 +70,43 @@ const Leaderboard = () => {
     }, []);
 
     const baseData = view === 'global' ? globalData : friendsData;
-    
-    const activeData = baseData.map(u => 
-        u.isMe 
-            ? { 
-                ...u, 
-                name: user?.name || 'Guest', 
-                handle: user?.email ? `@${user.email.split('@')[0]}` : '@guest', 
-                avatarInit: (user?.name || 'Guest').substring(0, 2).toUpperCase() 
-              }
-            : u
+
+    const activeData = baseData.map((entry) =>
+        entry.isMe
+            ? {
+                ...entry,
+                name: user?.name || 'Guest',
+                handle: user?.email ? `@${user.email.split('@')[0]}` : '@guest',
+                avatarInit: (user?.name || 'Guest').substring(0, 2).toUpperCase()
+            }
+            : entry
     );
 
-    const podiumFallback = useMemo(() => ({
-        1: '🥇',
-        2: '🥈',
-        3: '🥉'
-    }), []);
+    const podiumData = activeData.filter((entry) => entry.rank <= 3);
+    const listData = activeData.filter((entry) => entry.rank > 3);
+    const firstPlace = podiumData.find((entry) => entry.rank === 1);
+    const secondPlace = podiumData.find((entry) => entry.rank === 2);
+    const thirdPlace = podiumData.find((entry) => entry.rank === 3);
 
     return (
         <div className="leaderboard-container">
             <div className="leaderboard-header">
                 <div className="leaderboard-title-wrap">
                     <span className="leaderboard-header-lottie" aria-hidden="true">
-                        {headerAnimation ? <Lottie animationData={headerAnimation} loop autoplay /> : <span>🏆</span>}
+                        {headerAnimation ? <Lottie animationData={headerAnimation} loop autoplay /> : <span>Top</span>}
                     </span>
                     <h2 className="leaderboard-title">Leaderboards</h2>
                 </div>
-                
+
                 <div className="leaderboard-toggle-wrapper" data-active={view}>
                     <div className="leaderboard-toggle-pill"></div>
-                    <button 
+                    <button
                         className={`leaderboard-toggle-btn ${view === 'global' ? 'active' : ''}`}
                         onClick={() => setView('global')}
                     >
                         Global
                     </button>
-                    <button 
+                    <button
                         className={`leaderboard-toggle-btn ${view === 'friends' ? 'active' : ''}`}
                         onClick={() => setView('friends')}
                     >
@@ -118,29 +115,60 @@ const Leaderboard = () => {
                 </div>
             </div>
 
-            <div className="leaderboard-list">
-                {activeData.map((user) => (
-                    <div key={user.id} className={`leaderboard-row rank-${user.rank} ${user.isMe ? 'is-me' : ''}`}>
-                        <div className="leaderboard-rank">
-                            {user.rank <= 3 ? (
-                                <span className="leaderboard-rank-lottie" aria-hidden="true">
-                                    {podiumAnimations[user.rank]
-                                        ? <Lottie animationData={podiumAnimations[user.rank]} loop autoplay />
-                                        : <span>{podiumFallback[user.rank]}</span>}
-                                </span>
-                            ) : (
-                                user.rank
-                            )}
+            <div className="leaderboard-podium">
+                {secondPlace && (
+                    <div className="leaderboard-podium-card podium-second">
+                        <span className="leaderboard-podium-lottie" aria-hidden="true">
+                            {podiumAnimations[2] ? <Lottie animationData={podiumAnimations[2]} loop autoplay /> : <span>2</span>}
+                        </span>
+                        <div className="leaderboard-podium-avatar" style={{ background: secondPlace.avatarBg }}>
+                            {secondPlace.avatarInit}
                         </div>
-                        <div className="leaderboard-avatar" style={{ background: user.avatarBg }}>
-                            {user.avatarInit}
+                        <h4>{secondPlace.name}</h4>
+                        <p>{secondPlace.score} pts</p>
+                    </div>
+                )}
+
+                {firstPlace && (
+                    <div className="leaderboard-podium-card podium-first">
+                        <span className="leaderboard-podium-lottie leaderboard-podium-lottie--large" aria-hidden="true">
+                            {podiumAnimations[1] ? <Lottie animationData={podiumAnimations[1]} loop autoplay /> : <span>1</span>}
+                        </span>
+                        <div className="leaderboard-podium-avatar" style={{ background: firstPlace.avatarBg }}>
+                            {firstPlace.avatarInit}
+                        </div>
+                        <h4>{firstPlace.name}</h4>
+                        <p>{firstPlace.score} pts</p>
+                    </div>
+                )}
+
+                {thirdPlace && (
+                    <div className="leaderboard-podium-card podium-third">
+                        <span className="leaderboard-podium-lottie" aria-hidden="true">
+                            {podiumAnimations[3] ? <Lottie animationData={podiumAnimations[3]} loop autoplay /> : <span>3</span>}
+                        </span>
+                        <div className="leaderboard-podium-avatar" style={{ background: thirdPlace.avatarBg }}>
+                            {thirdPlace.avatarInit}
+                        </div>
+                        <h4>{thirdPlace.name}</h4>
+                        <p>{thirdPlace.score} pts</p>
+                    </div>
+                )}
+            </div>
+
+            <div className="leaderboard-list">
+                {listData.map((entry) => (
+                    <div key={entry.id} className={`leaderboard-row rank-${entry.rank} ${entry.isMe ? 'is-me' : ''}`}>
+                        <div className="leaderboard-rank">{entry.rank}</div>
+                        <div className="leaderboard-avatar" style={{ background: entry.avatarBg }}>
+                            {entry.avatarInit}
                         </div>
                         <div className="leaderboard-info">
-                            <h4 className="leaderboard-name">{user.name}{user.isMe ? ' (You)' : ''}</h4>
-                            <p className="leaderboard-handle">{user.handle}</p>
+                            <h4 className="leaderboard-name">{entry.name}{entry.isMe ? ' (You)' : ''}</h4>
+                            <p className="leaderboard-handle">{entry.handle}</p>
                         </div>
                         <div className="leaderboard-score-container">
-                            <span className="leaderboard-score-value">{user.score}</span>
+                            <span className="leaderboard-score-value">{entry.score}</span>
                             <span className="leaderboard-score-label">Points</span>
                         </div>
                     </div>

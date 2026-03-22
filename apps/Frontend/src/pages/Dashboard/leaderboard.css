@@ -1,16 +1,16 @@
-/* leaderboard.css */
 .leaderboard-container {
     display: flex;
     flex-direction: column;
     width: 100%;
     margin-top: 24px;
-    gap: 32px;
+    gap: 28px;
 }
 
 .leaderboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
 }
 
 .leaderboard-title-wrap {
@@ -85,6 +85,96 @@
     transform: translateX(100%);
 }
 
+.leaderboard-podium {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    align-items: end;
+}
+
+.leaderboard-podium-card {
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 22px;
+    padding: 20px 18px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    position: relative;
+}
+
+.leaderboard-podium-card::after {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 14px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.podium-first {
+    min-height: 296px;
+}
+
+.podium-second,
+.podium-third {
+    min-height: 236px;
+}
+
+.podium-second {
+    margin-bottom: 26px;
+}
+
+.podium-third {
+    margin-bottom: 10px;
+}
+
+.leaderboard-podium-lottie {
+    width: 72px;
+    height: 72px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.leaderboard-podium-lottie--large {
+    width: 92px;
+    height: 92px;
+}
+
+.leaderboard-podium-lottie > div,
+.leaderboard-podium-lottie svg {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.leaderboard-podium-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #fff;
+}
+
+.leaderboard-podium-card h4 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--md-sys-color-on-surface);
+}
+
+.leaderboard-podium-card p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
 .leaderboard-list {
     display: flex;
     flex-direction: column;
@@ -99,12 +189,12 @@
     border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--md-sys-shape-corner-medium);
     gap: 16px;
-    transition: transform var(--md-sys-motion-duration-short) ease, background-color var(--md-sys-motion-duration-short) ease;
+    transition: background-color var(--md-sys-motion-duration-short) ease, border-color var(--md-sys-motion-duration-short) ease;
 }
 
 .leaderboard-row:hover {
-    transform: translateY(-2px);
     background-color: var(--md-sys-color-surface-container-high);
+    border-color: var(--md-sys-color-outline);
 }
 
 .leaderboard-rank {
@@ -117,30 +207,6 @@
     align-items: center;
     justify-content: center;
 }
-
-.leaderboard-rank-lottie {
-    width: 28px;
-    height: 28px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.leaderboard-rank-lottie > div,
-.leaderboard-rank-lottie svg {
-    width: 28px !important;
-    height: 28px !important;
-}
-
-/* Podium Colors */
-.leaderboard-row.rank-1 .leaderboard-rank { color: #FFD700; /* Gold */ }
-.leaderboard-row.rank-2 .leaderboard-rank { color: #C0C0C0; /* Silver */ }
-.leaderboard-row.rank-3 .leaderboard-rank { color: #CD7F32; /* Bronze */ }
-
-.leaderboard-row.rank-1 { border-color: rgba(255, 215, 0, 0.3); background-color: rgba(255, 215, 0, 0.05); }
-.leaderboard-row.rank-2 { border-color: rgba(192, 192, 192, 0.3); background-color: rgba(192, 192, 192, 0.05); }
-.leaderboard-row.rank-3 { border-color: rgba(205, 127, 50, 0.3); background-color: rgba(205, 127, 50, 0.05); }
-
 
 .leaderboard-avatar {
     width: 48px;
@@ -180,7 +246,7 @@
 .leaderboard-score-value {
     font-size: 20px;
     font-weight: 800;
-    color: var(--md-sys-color-primary); /* Neon Green pop */
+    color: var(--md-sys-color-primary);
 }
 
 .leaderboard-score-label {
@@ -189,4 +255,22 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--md-sys-color-on-surface-variant);
+}
+
+@media (max-width: 900px) {
+    .leaderboard-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .leaderboard-podium {
+        grid-template-columns: 1fr;
+    }
+
+    .podium-first,
+    .podium-second,
+    .podium-third {
+        min-height: auto;
+        margin-bottom: 0;
+    }
 }
