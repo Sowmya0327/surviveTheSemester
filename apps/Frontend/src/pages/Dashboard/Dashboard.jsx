@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './dashboard.css';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import TopUserRow from '../../components/TopUserRow/TopUserRow';
 import GameCardGrid from '../../components/GameCardGrid/GameCardGrid';
 import RightPanel from '../../components/RightPanel/RightPanel';
 import Navbar from '../../components/Navbar';
@@ -49,17 +50,6 @@ const Dashboard = () => {
         }
     }, [activeTab, hasUnreadNotifications]);
 
-    React.useEffect(() => {
-        const handleDashboardTab = (event) => {
-            if (event?.detail) {
-                setActiveTab(event.detail);
-            }
-        };
-
-        window.addEventListener('dashboard:set-tab', handleDashboardTab);
-        return () => window.removeEventListener('dashboard:set-tab', handleDashboardTab);
-    }, []);
-
     const gameRoutes = {
         twoPlayer: "/campusFighter",
         puzzle: "/puzzle",
@@ -71,7 +61,12 @@ const Dashboard = () => {
     const handlePlayGame = (gameId) => {
         const route = gameRoutes[gameId];
         if (route) {
-            window.open(route, '_blank', 'noopener,noreferrer');
+            // Since you aren't using react-router-dom, use the window API:
+            window.history.pushState({}, '', route);
+            
+            // Trigger a popstate event so your App.jsx "router" notices the change
+            const navEvent = new PopStateEvent('popstate');
+            window.dispatchEvent(navEvent);
         } else {
             console.warn("Unknown game:", gameId);
         }
@@ -95,13 +90,14 @@ const Dashboard = () => {
         }
         return (
             <>
+                <TopUserRow />
                 <GameCardGrid onPlayGame={handlePlayGame} />
             </>
         );
     };
 
     return (
-        <div className="dashboard-shell">
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Navbar /> 
             <div className="dashboard-container">
                 <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} hasUnreadNotifications={hasUnreadNotifications} />
