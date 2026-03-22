@@ -3,13 +3,15 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import registerAllRoutes from "./routes/index.js";
-import { errorMiddleware } from "./middleware/error.js"; 
+import { errorMiddleware } from "./middleware/error.js";
 import compression from "compression";
-import { createServer }  from "http";
+import { createServer } from "http";
 import registerGameServer from "./games/index.js";
 import { matchMaker } from "@colyseus/core";
 import { join } from "path";
 import { fileURLToPath } from "url";
+import initChatSocket from "./chat/socket.js";
+import { prisma } from "./prisma/prisma.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const PUBLIC_DIR = join(__dirname, "./public");
@@ -17,8 +19,8 @@ const PUBLIC_DIR = join(__dirname, "./public");
 const app = express();
 
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    credentials: true,
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  credentials: true,
 }));
 
 // // Intercept Colyseus matchmaking routes so Express doesn't send a 404, Do not move, do not touch. --Siddharth
@@ -33,12 +35,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(compression())
 
+app.use((req, res, next) => {
+  console.log(`[REQ] ${req.method} ${req.url}`);
+  next();
+});
 
 registerAllRoutes(app);
 app.use(express.static(PUBLIC_DIR));
 
 const httpServer = createServer(app);
 const gameServer = registerGameServer(app, httpServer);
+initChatSocket();
 
 app.get("/api/games/rooms/:roomName", async (req, res) => {
   try {
@@ -138,9 +145,11 @@ app.get("/api/games/binarysudoku/rooms", async (req, res) => {
 });
 
 
+
+
 app.get(/.*/, (req, res, next) => {
-  if (req.path.startsWith("/matchmake")) {
-    return next();
+  if (req.path.startsWith("/matchmake") || req.path.startsWith("/socket.io")) {
+    return; // Do not call next() or send response. Let websocket handle it natively.
   }
   res.sendFile(join(PUBLIC_DIR, "index.html"));
 });
