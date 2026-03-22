@@ -1,5 +1,8 @@
 import React from 'react';
 import './profileachievements.css';
+import firstBadge from '../../assests/Badges/first.svg';
+import sevenDayBadge from '../../assests/Badges/7day.svg';
+import thirtyDayBadge from '../../assests/Badges/30day.svg';
 
 const ForwardIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -8,7 +11,11 @@ const ForwardIcon = () => (
     </svg>
 );
 
-const achievementsData = [3, 7, 14, 30, 50, 100];
+const achievementsData = [
+    { id: 'first', label: 'First win', image: firstBadge },
+    { id: '7day', label: '7 day streak', image: sevenDayBadge },
+    { id: '30day', label: '30 day streak', image: thirtyDayBadge },
+];
 
 const ProfileAchievements = () => {
     return (
@@ -19,12 +26,11 @@ const ProfileAchievements = () => {
                     <ForwardIcon />
                 </button>
             </div>
-            
+
             <div className="profile-achievements-list">
-                {achievementsData.map((num, i) => (
-                    <div key={i} className="profile-achievement-badge">
-                        <span className="badge-icon">🔥</span>
-                        <span className="badge-number">{num}</span>
+                {achievementsData.map((badge) => (
+                    <div key={badge.id} className="profile-achievement-badge">
+                        <img src={badge.image} alt={badge.label} className="profile-achievement-image" />
                     </div>
                 ))}
             </div>

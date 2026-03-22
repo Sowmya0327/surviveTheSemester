@@ -9,11 +9,11 @@ const ForwardIcon = () => (
 );
 
 const filters = [
-    { id: 'math', label: 'Math', icon: '▶▶' },
-    { id: 'classical', label: 'Classical', icon: '♔' },
-    { id: 'memory', label: 'Memory', icon: '⚖' },
-    { id: 'puzzle', label: 'Puzzle', icon: '⚄' },
-    { id: 'groupplay', label: 'Group Play', icon: '🫂' }
+    { id: 'two-player', label: 'Two Player Arena' },
+    { id: 'puzzle15', label: '15 Puzzle' },
+    { id: 'canon', label: 'Canon Game' },
+    { id: 'math-tug', label: 'Math Tug-of-War' },
+    { id: 'binary-sudoku', label: 'Binary Sudoku' }
 ];
 
 const matchesData = [
@@ -22,7 +22,7 @@ const matchesData = [
         opponent: 'prob',
         opponentScore: 1118,
         date: '30 Jan, 11:04 AM',
-        mode: 'SPRINT DUELS',
+        mode: 'Math Tug-of-War',
         myMatchScore: 19,
         oppMatchScore: 28,
         ratingDiff: -5,
@@ -33,16 +33,16 @@ const matchesData = [
         opponent: 'guest640233',
         opponentScore: 1072,
         date: '12 Jan, 08:30 AM',
-        mode: 'SPRINT DUELS',
+        mode: 'Binary Sudoku',
         myMatchScore: 21,
         oppMatchScore: 10,
         ratingDiff: 13,
-        avatarImg: '🐶' // Using emoji as placeholder since image not easily available
+        avatarImg: 'D'
     }
 ];
 
 const ProfileHistory = () => {
-    const [activeFilter, setActiveFilter] = useState('math');
+    const [activeFilter, setActiveFilter] = useState('two-player');
 
     return (
         <div className="profile-history-container">
@@ -52,26 +52,26 @@ const ProfileHistory = () => {
                     <ForwardIcon />
                 </button>
             </div>
-            
+
             <div className="profile-history-filters">
-                {filters.map(filter => (
-                    <button 
+                {filters.map((filter) => (
+                    <button
                         key={filter.id}
                         className={`profile-filter-btn ${activeFilter === filter.id ? 'active' : ''}`}
                         onClick={() => setActiveFilter(filter.id)}
                     >
-                        <span>{filter.icon}</span> {filter.label}
+                        {filter.label}
                     </button>
                 ))}
             </div>
-            
+
             <div className="profile-matches-list">
-                {matchesData.map(match => {
+                {matchesData.map((match) => {
                     const isWin = match.myMatchScore > match.oppMatchScore;
                     return (
                         <div key={match.id} className="profile-match-card">
                             <div className="profile-match-left">
-                                <div className="profile-match-avatar" style={match.avatarImg ? {backgroundColor: '#dcdde1'} : {}}>
+                                <div className="profile-match-avatar" style={match.avatarImg ? { backgroundColor: '#dcdde1' } : {}}>
                                     {match.avatarImg ? match.avatarImg : match.avatarInitial}
                                 </div>
                                 <div className="profile-match-info">
@@ -81,7 +81,7 @@ const ProfileHistory = () => {
                                     </p>
                                 </div>
                             </div>
-                            
+
                             <div className="profile-match-right">
                                 <span className="profile-match-type">{match.mode}</span>
                                 <div className="profile-match-result-row">

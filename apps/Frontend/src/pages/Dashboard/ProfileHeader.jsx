@@ -2,13 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import './profileheader.css';
 import EditProfileModal from './EditProfileModal';
-
-const PlusIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-    </svg>
-);
+import bannerPlaceholder from '../../assests/gamesCards/15puzzle.png';
 
 const UserPlusIcon = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -28,22 +22,18 @@ const EditIcon = () => (
 
 const ProfileHeader = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    
     const user = useSelector((state) => state.user.currentUser);
-    
-    // Core profile state
+
     const [profile, setProfile] = useState({
         name: user?.name || 'Guest',
         handle: user?.email ? `@${user.email.split('@')[0]}` : '@guest',
         friends: 0,
-        tag1: 'Add College',
-        tag2: 'Add Socials',
         avatarGradient: 'linear-gradient(135deg, #ff7e5f, #feb47b)'
     });
 
     useEffect(() => {
         if (user) {
-            setProfile(prev => ({
+            setProfile((prev) => ({
                 ...prev,
                 name: user.name,
                 handle: `@${user.email.split('@')[0]}`
@@ -55,45 +45,41 @@ const ProfileHeader = () => {
         setProfile(newData);
     };
 
+    const handleMoreFriends = () => {
+        window.dispatchEvent(new CustomEvent('dashboard:set-tab', { detail: 'Search users' }));
+    };
+
     return (
         <div className="profile-header-container">
             <div className="profile-cover">
+                <img src={bannerPlaceholder} alt="Profile banner" className="profile-cover-image" />
                 <span className="profile-cover-badge">Amateur</span>
             </div>
-            
+
             <div className="profile-info-section">
                 <div className="profile-avatar-wrapper">
                     <div className="profile-avatar" style={{ background: profile.avatarGradient }}></div>
                 </div>
-                
+
                 <div className="profile-details">
                     <h2 className="profile-name">{profile.name}</h2>
                     <p className="profile-handle">{profile.handle}</p>
                     <p className="profile-friends-count">{profile.friends} Friends</p>
                 </div>
-                
-                <div className="profile-tags">
-                    <button className="profile-tag-btn">
-                        <PlusIcon /> {profile.tag1}
-                    </button>
-                    <button className="profile-tag-btn">
-                        <PlusIcon /> {profile.tag2}
-                    </button>
-                </div>
-                
+
                 <div className="profile-actions">
-                    <button className="profile-action-btn">
+                    <button type="button" className="profile-action-btn" onClick={handleMoreFriends}>
                         <UserPlusIcon /> Add More Friends
                     </button>
-                    <button className="profile-share-btn" onClick={() => setIsEditModalOpen(true)} title="Edit Profile">
+                    <button type="button" className="profile-share-btn" onClick={() => setIsEditModalOpen(true)} title="Edit Profile">
                         <EditIcon />
                     </button>
                 </div>
             </div>
 
-            <EditProfileModal 
-                isOpen={isEditModalOpen} 
-                onClose={() => setIsEditModalOpen(false)} 
+            <EditProfileModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
                 profileData={profile}
                 onSave={handleSaveProfile}
             />

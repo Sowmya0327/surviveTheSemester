@@ -14,7 +14,9 @@ export default function registerGameServer(app, httpServer) {
       server: httpServer,
       pingInterval: 5000, 
       pingMaxRetries: 3, 
-    })
+      reservationTimeout: 20000
+    }),
+    publicAddress: (process.env.SERVER_URL || "localhost:3000").replace(/^https?:\/\//, '')
   });
   gameServer.define("campusFighter", fighterGameRoom);
   gameServer.define("puzzle15", Puzzle15Room);
