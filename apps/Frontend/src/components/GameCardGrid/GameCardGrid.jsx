@@ -2,17 +2,16 @@ import React from 'react';
 import GameCard from './GameCard';
 import './gamecardgrid.css';
 
-import puzzleAnim from '../../assests/lottie/15puzzle.json';
-import swipeAnim from '../../assests/lottie/swipe.json';
-// Let's use puzzleAnim as fallback or just nothing since Lottie handles missing data gracefully
+import tosiosImage from '../../assests/gamesCards/tosios.png';
+import puzzleImage from '../../assests/gamesCards/15puzzle.png';
+import canonImage from '../../assests/gamesCards/canon.png';
 
 const games = [
-    { id: 1, title: 'Two Player Arena (TOSIOS)', animationData: puzzleAnim, gameId: 'twoPlayer' },
-    { id: 2, title: '15 Puzzle', animationData: puzzleAnim, gameId: 'puzzle' },
-    { id: 3, title: 'Make Grid Equal', animationData: swipeAnim, gameId: 'makeGrid' },
-    { id: 4, title: 'Canon Game', animationData: puzzleAnim, gameId: 'canonGame' },
-    { id: 5, title: 'Math Tug-of-War', animationData: puzzleAnim, gameId: 'mathTug' },
-    { id: 6, title: 'Binary Sudoku', animationData: puzzleAnim, gameId: 'binarySudoku' },
+    { id: 1, title: 'Two Player Arena (TOSIOS)', imageSrc: tosiosImage, gameId: 'twoPlayer' },
+    { id: 2, title: '15 Puzzle', imageSrc: puzzleImage, gameId: 'puzzle' },
+    { id: 3, title: 'Canon Game', imageSrc: canonImage, gameId: 'canonGame' },
+    { id: 4, title: 'Math Tug-of-War', imageSrc: tosiosImage, gameId: 'mathTug' },
+    { id: 5, title: 'Binary Sudoku', imageSrc: canonImage, gameId: 'binarySudoku' },
 ];
 
 const GameCardGrid = ({ onPlayGame }) => {
@@ -24,7 +23,7 @@ const GameCardGrid = ({ onPlayGame }) => {
                     <GameCard 
                         key={game.id} 
                         title={game.title} 
-                        animationData={game.animationData} 
+                        imageSrc={game.imageSrc}
                         onClick={() => onPlayGame && onPlayGame(game.gameId)}
                     />
                 ))}
