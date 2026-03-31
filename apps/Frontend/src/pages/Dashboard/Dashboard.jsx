@@ -61,7 +61,12 @@ const Dashboard = () => {
     const handlePlayGame = (gameId) => {
         const route = gameRoutes[gameId];
         if (route) {
-            window.location.href = route;
+            // Since you aren't using react-router-dom, use the window API:
+            window.history.pushState({}, '', route);
+            
+            // Trigger a popstate event so your App.jsx "router" notices the change
+            const navEvent = new PopStateEvent('popstate');
+            window.dispatchEvent(navEvent);
         } else {
             console.warn("Unknown game:", gameId);
         }
@@ -85,7 +90,7 @@ const Dashboard = () => {
         }
         return (
             <>
-                <TopUserRow />
+                {/* <TopUserRow /> */}
                 <GameCardGrid onPlayGame={handlePlayGame} />
             </>
         );
